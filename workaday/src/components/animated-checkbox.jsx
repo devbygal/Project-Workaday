@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { Platform } from "react-native";
 import Animated, { Easing, useSharedValue, useAnimatedProps, withTiming, interpolateColor } from "react-native-reanimated";
 import Svg, { Path, Defs, ClipPath, G } from "react-native-svg";
 import AnimatedStroke from "./animated-stroke";
@@ -11,7 +12,7 @@ const outlineBoxPath = 'M24 0.5H40C48.5809 0.5 54.4147 2.18067 58.117 5.88299C61
 
 const AnimatedPath = Animated.createAnimatedComponent(Path);
 
-export const AnimatedCheckbox = (props) => {
+const AnimatedCheckbox = (props) => {
     const { checked, checkmarkColor, highlightColor, boxOutlineColor } = props;
 
     const progress = useSharedValue(0);
@@ -30,22 +31,48 @@ export const AnimatedCheckbox = (props) => {
 
     return (
         <Svg viewBox={[-MARGIN, -MARGIN, vWidth + MARGIN, vHeight + MARGIN].join(' ')}>
+            <Defs>
+                <ClipPath id="clipPath">
+                    <Path
+                        fill={"white"}
+                        stroke="gray"
+                        strokeLinejoin="round"
+                        strokeLinecap="round"
+                        d={outlineBoxPath}
+                    />
+                </ClipPath>
+            </Defs>
+            <AnimatedStroke
+                    progress={progress}
+                    d={checkMarkPath}
+                    stroke={highlightColor}
+                    strokeWidth={10}
+                    strokeLinejoin="round"
+                    strokeLinecap="round"
+                    strokeOpacity={checked || false ? 1 : 0}
+                />
             <AnimatedPath
                 d={outlineBoxPath}
                 strokeWidth={7}
                 strokeLinejoin="round"
                 strokeLinecap="round"
                 animatedProps={animatedBoxProps}
+                stroke={Platform.OS === 'android' && checked == true ? highlightColor : boxOutlineColor}
+                fill={Platform.OS === 'android' && checked == true ? highlightColor : "#00000000"}
             />
-            <AnimatedStroke 
-                progress={progress}
-                d={checkMarkPath}
-                stroke={checkmarkColor}
-                strokeWidth={10}
-                strokeLinejoin="round"
-                strokeLinecap="round"
-                strokeOpacity={checked || false ? 1 : 0}
-            />
+            <G clipPath={"url(#clipPath)"}>
+                <AnimatedStroke
+                    progress={progress}
+                    d={checkMarkPath}
+                    stroke={checkmarkColor}
+                    strokeWidth={10}
+                    strokeLinejoin="round"
+                    strokeLinecap="round"
+                    strokeOpacity={checked || false ? 1 : 0}
+                />
+            </G>
         </Svg>
     );
 }
+
+export default AnimatedCheckbox;
