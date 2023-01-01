@@ -14,7 +14,7 @@ const TaskItem = (props) => {
 
     const highlightColor = themeTools.getColor(
         theme,
-        useColorModeValue('blue.500', 'blue.400'),
+        useColorModeValue('indigo.500', 'indigo.400'),
     );
     const boxStroke = themeTools.getColor(
         theme,
