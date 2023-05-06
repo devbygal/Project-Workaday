@@ -1,18 +1,19 @@
 import React, { useCallback, useContext } from "react";
 import { PanGestureHandlerProps } from "react-native-gesture-handler";
 import { Pressable, NativeSyntheticEvent, TextInputChangeEventData } from 'react-native';
-import { Box, HStack, useTheme, themeTools, useColorModeValue, Icon, Input } from 'native-base';
+import { Box, HStack, useTheme, themeTools, useColorModeValue, Icon, Input, Text, Button } from 'native-base';
 import AnimatedCheckbox from "./animated-checkbox";
 import AnimatedTaskLabel from "./animated-task-label";
 import SwipableView from "./swipable-view";
 import { Feather } from '@expo/vector-icons';
 import InfoButton from "./info-button";
 import { AlertContext } from "./context/AlertContext";
+import { AntDesign } from '@expo/vector-icons';
 
-const TaskItem = (props) => {
-    const { isEditing, isDone, onToggleCheckbox, subject, onPressLabel, onRemove, onChangeSubject, onFinishEditing, simultaneousHandlers } = props;
+const ShoppingItem = (props) => {
+    const { isEditing, isDone, onToggleCheckbox, subject, onPressLabel, onRemove, onChangeSubject, onFinishEditing, quantity, onQuantityItem, simultaneousHandlers } = props;
 
-    const { show, setShow, setTaskSubject } = useContext(AlertContext);
+    const { show, setShow, setTaskSubject, setQuantity } = useContext(AlertContext);
 
     const theme = useTheme();
 
@@ -40,6 +41,18 @@ const TaskItem = (props) => {
     const handleChangeSubject = useCallback((event) => {
         onChangeSubject && onChangeSubject(event.nativeEvent.text);
     }, [onChangeSubject])
+
+    const handleQuantityItemMinus = useCallback((event) => {
+        if (quantity <= 1) {
+            onQuantityItem(quantity);
+        } else {
+            onQuantityItem(quantity - 1);
+        }
+    }, [onQuantityItem])
+
+    const handleQuantityItemPlus = useCallback((event) => {
+        onQuantityItem(quantity + 1);
+    }, [onQuantityItem])
 
     return (
         <HStack opacity={show ? 0.2 : 1}>
@@ -71,18 +84,39 @@ const TaskItem = (props) => {
                             blurOnSubmit
                             onChange={handleChangeSubject}
                             onBlur={onFinishEditing}
-                            w={280}
+                            w={180}
                         />
                     ) : (
-                        <AnimatedTaskLabel textColor={activeTextColor} inactiveTextColor={doneTextColor} strikethrough={isDone} onPress={onPressLabel}>
+                        <AnimatedTaskLabel quantity={quantity} textColor={activeTextColor} inactiveTextColor={doneTextColor} strikethrough={isDone} onPress={onPressLabel}>
                             {subject}
                         </AnimatedTaskLabel>
                     )}
-                    {subject.length > 27 &&
+                    <HStack backgroundColor={useColorModeValue("primary.100", "primary.100")} style={{
+                            borderRadius: 50,
+                            marginLeft: 10,
+                        }}>
+                        <Button style={{
+                            backgroundColor: "transprent",
+                        }}
+                        onPress={handleQuantityItemMinus}
+                        >
+                            <AntDesign name="left" size={"sm"} color="#000" />
+                        </Button>
+                        <Text fontSize={20} color={"#000"}>{quantity}</Text>
+                        <Button style={{
+                            backgroundColor: "transprent",
+                        }}
+                        onPress={handleQuantityItemPlus}
+                        >
+                            <AntDesign name="right" size={"sm"} color="#000" />
+                        </Button>
+                    </HStack>
+                    {subject.length > 19 &&
                         <InfoButton
                             onPress={() => {
                                 setShow(true);
                                 setTaskSubject(subject);
+                                setQuantity(quantity);
                             }}
                             icon="info"
                         />
@@ -93,4 +127,4 @@ const TaskItem = (props) => {
     );
 }
 
-export default TaskItem;
+export default ShoppingItem;

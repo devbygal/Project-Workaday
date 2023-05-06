@@ -3,46 +3,28 @@ import { Icon, VStack, useColorModeValue, Fab } from "native-base";
 import { AntDesign } from '@expo/vector-icons';
 import AnimatedColorBox from "../components/animated-color-box";
 import shortid from "shortid";
-import TaskList from "../components/task-list";
+import ShoppingList from "../components/shopping-list";
 import Hero from "../components/hero";
 import NavBar from "../components/navbar";
 import { StatusBar } from "expo-status-bar";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-// import { I18nManager } from "react-native";
-// I18nManager.allowRTL(false);
-
 const date = new Date();
 const initialData = [];
 
-// AsyncStorage.getItem('data', (error, result) => {
-//     if (result !== null) {
-//         AsyncStorage.setItem('data', JSON.stringify(JSON.parse(result)), (error) => {
-//             if (error) {
-//                 console.log(error);
-//             }
-//         });
-//     } else {
-//         AsyncStorage.setItem('data', JSON.stringify(data), (error) => {
-//             if (error) {
-//                 console.log(error);
-//             }
-//         });
-//     }
-// });
-AsyncStorage.setItem('data', JSON.stringify(initialData))
+AsyncStorage.setItem('shopping-data', JSON.stringify(initialData))
 
-export default function MainScreen() {
+export default function ShoppingScreen() {
     const [data, setData] = useState(initialData);
     const [editingItemId, setEditingItemId] = useState(null);
 
     useEffect(() => {
         const getData = async () => {
             try {
-              const data = await AsyncStorage.getItem('data');
+              const data = await AsyncStorage.getItem('shopping-data');
               if (data) {
                 setData(JSON.parse(data));
-                console.log('Get data: ' + data)
+                console.log('Get shopping data: ' + data)
               }
             } catch (error) {
               console.log(error);
@@ -86,6 +68,18 @@ export default function MainScreen() {
         setEditingItemId(item.id);
     }, [])
 
+    const handleQuantityItem = useCallback((item, newQuantity) => {
+        setData(prevData => {
+            const newData = [...prevData];
+            const index = prevData.indexOf(item);
+            newData[index] = {
+                ...item,
+                quantity: newQuantity
+            }
+            return newData
+        });
+    }, [])
+
     const handleRemoveItem = useCallback((item) => {
         setData(prevData => {
             const newData = prevData.filter(i => i !== item);
@@ -101,19 +95,20 @@ export default function MainScreen() {
         >
             <StatusBar style={useColorModeValue('dark', 'light')}/>
             <Hero
-                title={"Keep Your Tasks on Track!"}
+                title={"Remember What You Need Shop Smart,\nNot Hard!"}
                 day={date.toDateString()}
-                hero={"main"}
+                hero={"shopping"}
             >
                 <NavBar />
             </Hero>
             <VStack flex={1} space={1} bg={useColorModeValue('warmGray.50', 'primary.900')} mt="-20px" borderTopLeftRadius={"20px"} borderTopRightRadius={"20px"} pt="20px">
-                <TaskList
+                <ShoppingList
                     data={data}
                     onToggleItem={handleToggleTaskItem}
                     onChangeSubject={handleChangeTaskItemSubject}
                     onFinishEditing={handleFinishEditingTaskItem}
                     onPressLabel={handlePressTaskItemLabel}
+                    onQuantityItem={handleQuantityItem}
                     onRemoveItem={handleRemoveItem}
                     editingItemId={editingItemId}
                 />
@@ -131,6 +126,7 @@ export default function MainScreen() {
                         {
                             id,
                             subject: '',
+                            quantity: 1,
                             done: false
                         },
                         ...data

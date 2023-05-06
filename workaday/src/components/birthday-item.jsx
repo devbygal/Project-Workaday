@@ -2,14 +2,14 @@ import React, { useCallback, useContext } from "react";
 import { PanGestureHandlerProps } from "react-native-gesture-handler";
 import { Pressable, NativeSyntheticEvent, TextInputChangeEventData } from 'react-native';
 import { Box, HStack, useTheme, themeTools, useColorModeValue, Icon, Input } from 'native-base';
-import AnimatedCheckbox from "./animated-checkbox";
+import AnimatedTimebox from "./animated-timebox";
 import AnimatedTaskLabel from "./animated-task-label";
 import SwipableView from "./swipable-view";
 import { Feather } from '@expo/vector-icons';
 import InfoButton from "./info-button";
 import { AlertContext } from "./context/AlertContext";
 
-const TaskItem = (props) => {
+const BirthdayItem = (props) => {
     const { isEditing, isDone, onToggleCheckbox, subject, onPressLabel, onRemove, onChangeSubject, onFinishEditing, simultaneousHandlers } = props;
 
     const { show, setShow, setTaskSubject } = useContext(AlertContext);
@@ -18,7 +18,7 @@ const TaskItem = (props) => {
 
     const highlightColor = themeTools.getColor(
         theme,
-        useColorModeValue('blue.500', 'blue.400'),
+        useColorModeValue('yellow.500', 'yellow.400'),
     );
     const boxStroke = themeTools.getColor(
         theme,
@@ -51,7 +51,7 @@ const TaskItem = (props) => {
                 <HStack alignItems={"center"} w={"full"} px={4} py={2} bg={useColorModeValue('warmGray.50', 'primary.900')}>
                     <Box width={30} height={30} mr={2}>
                         <Pressable onPress={onToggleCheckbox}>
-                            <AnimatedCheckbox
+                            <AnimatedTimebox
                                 highlightColor={highlightColor}
                                 checkmarkColor={checkmarkColor}
                                 boxOutlineColor={boxStroke}
@@ -74,7 +74,7 @@ const TaskItem = (props) => {
                             w={280}
                         />
                     ) : (
-                        <AnimatedTaskLabel textColor={activeTextColor} inactiveTextColor={doneTextColor} strikethrough={isDone} onPress={onPressLabel}>
+                        <AnimatedTaskLabel textColor={activeTextColor} inactiveTextColor={doneTextColor} onPress={onPressLabel}>
                             {subject}
                         </AnimatedTaskLabel>
                     )}
@@ -93,4 +93,4 @@ const TaskItem = (props) => {
     );
 }
 
-export default TaskItem;
+export default BirthdayItem;

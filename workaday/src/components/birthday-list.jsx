@@ -1,7 +1,7 @@
 import React, { useCallback, useContext, useRef } from "react";
 import { AnimatePresence, View } from "moti";
 import { ScrollView } from "react-native-gesture-handler";
-import TaskItem from './task-item';
+import BirthdayItem from './birthday-item';
 import { makeStyledComponent } from "../untils/styled";
 import { AlertContext } from "./context/AlertContext";
 import AlertItem from "./alert-item";
@@ -10,7 +10,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 const StyleView = makeStyledComponent(View);
 const StyleScrollView = makeStyledComponent(ScrollView);
 
-export const AnimatedTaskItem = (props) => {
+export const AnimatedBirthdayItem = (props) => {
     const {
         isEditing,
         onToggleItem,
@@ -27,21 +27,21 @@ export const AnimatedTaskItem = (props) => {
     const handleToggleCheckbox = useCallback(() => {
         onToggleItem(data);
 
-        AsyncStorage.getItem('data', (error, result) => {
+        AsyncStorage.getItem('birthday-data', (error, result) => {
             if (result !== null) {
               const currentArray = JSON.parse(result);
               const index = currentArray.findIndex((obj) => obj.id === data.id);
               if (index != -1) {
                   // Update the attribute of the object
                   currentArray[index].done = !data.done;
-                  AsyncStorage.setItem('data', JSON.stringify(currentArray), (error) => {
+                  AsyncStorage.setItem('birthday-data', JSON.stringify(currentArray), (error) => {
                     if (error) {
                       console.log(error);
                     }
                   });
               }
             } else {
-              AsyncStorage.setItem('data', JSON.stringify(data), (error) => {
+              AsyncStorage.setItem('birthday-data', JSON.stringify(data), (error) => {
                 if (error) {
                   console.log(error);
                 }
@@ -56,9 +56,9 @@ export const AnimatedTaskItem = (props) => {
     }, [data, onChangeSubject])
 
     const handleFinishEditing = useCallback(() => {
-        onFinishEditing(data);
-
-        AsyncStorage.getItem('data', (error, result) => {
+        onFinishEditing(data);  
+        
+        AsyncStorage.getItem('birthday-data', (error, result) => {
             if (result !== null) {
               const currentArray = JSON.parse(result);
               const index = currentArray.findIndex((obj) => obj.id === data.id);
@@ -66,7 +66,7 @@ export const AnimatedTaskItem = (props) => {
                   // Update the attribute of the object
                   currentArray[index].subject = data.subject;
 
-                  AsyncStorage.setItem('data', JSON.stringify(currentArray), (error) => {
+                  AsyncStorage.setItem('birthday-data', JSON.stringify(currentArray), (error) => {
                     if (error) {
                       console.log(error);
                     }
@@ -74,20 +74,20 @@ export const AnimatedTaskItem = (props) => {
               }
               else {
                   currentArray.unshift(data); // Add new item to the beginning of the array
-                  AsyncStorage.setItem('data', JSON.stringify(currentArray), (error) => {
+                  AsyncStorage.setItem('birthday-data', JSON.stringify(currentArray), (error) => {
                       if (error) {
                           console.log(error);
                       }
                   });
               }
             } else {
-              AsyncStorage.setItem('data', JSON.stringify(data), (error) => {
+              AsyncStorage.setItem('birthday-data', JSON.stringify(data), (error) => {
                 if (error) {
                   console.log(error);
                 }
               });
             }
-          });          
+          });
     }, [data, onPressLabel])
 
     const handlePressLabel = useCallback(() => {
@@ -98,7 +98,7 @@ export const AnimatedTaskItem = (props) => {
         onRemove(data);
         setShow(false);
 
-        AsyncStorage.getItem('data', (error, result) => {
+        AsyncStorage.getItem('birthday-data', (error, result) => {
             if (result !== null) {
                 const currentArray = JSON.parse(result);
                 // Find the index of the object that you want to delete
@@ -108,13 +108,13 @@ export const AnimatedTaskItem = (props) => {
                 if (indexToDelete !== -1) {
                     currentArray.splice(indexToDelete, 1);
                 }
-                AsyncStorage.setItem('data', JSON.stringify(currentArray), (error) => {
+                AsyncStorage.setItem('birthday-data', JSON.stringify(currentArray), (error) => {
                   if (error) {
                     console.log(error);
                   }
                 });
               } else {
-                AsyncStorage.setItem('data', JSON.stringify(data), (error) => {
+                AsyncStorage.setItem('birthday-data', JSON.stringify(data), (error) => {
                   if (error) {
                     console.log(error);
                   }
@@ -133,7 +133,7 @@ export const AnimatedTaskItem = (props) => {
         }} exit={{
             scale: 0.5,
         }}>
-            <TaskItem 
+            <BirthdayItem 
                 simultaneousHandlers={simultaneousHandlers}
                 subject={data.subject}
                 isDone={data.done}
@@ -149,7 +149,7 @@ export const AnimatedTaskItem = (props) => {
     );
 }
 
-export default function TaskList(props) {
+export default function BirthdayList(props) {
     const {
         data,
         editingItemId,
@@ -166,7 +166,7 @@ export default function TaskList(props) {
         <StyleScrollView w="full" ref={refScrollView}>
             <AnimatePresence>
                 {data.map(item => (
-                    <AnimatedTaskItem 
+                    <AnimatedBirthdayItem 
                         key={item.id}
                         data={item}
                         simultaneousHandlers={refScrollView}
